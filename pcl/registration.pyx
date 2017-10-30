@@ -95,7 +95,7 @@ def icp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, max_corre
         Sum of squares error in the estimated transformation.
     """
     cdef IterativeClosestPoint[cpp.PointXYZ, cpp.PointXYZ] icp
-    return run(icp, source, target, max_iter)
+    return run(icp, source, target, max_iter, max_corres_distance)
 
 
 def gicp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, max_corres_distance=None):
