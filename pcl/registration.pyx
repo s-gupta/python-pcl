@@ -39,12 +39,16 @@ cdef extern from "pcl/registration/icp_nl.h" namespace "pcl" nogil:
 
 
 cdef object run(Registration[cpp.PointXYZ, cpp.PointXYZ] &reg,
-                _pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
+                _pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, 
+                max_corres_distance=None):
     reg.setInputSource(source.thisptr_shared)
     reg.setInputTarget(target.thisptr_shared)
 
     if max_iter is not None:
         reg.setMaximumIterations(max_iter)
+
+    if max_corres_distance is not None:
+        reg.setMaxCorrespondenceDistance(max_corres_distance)
 
     cdef _pcl.PointCloud result = _pcl.PointCloud()
 
@@ -66,7 +70,7 @@ cdef object run(Registration[cpp.PointXYZ, cpp.PointXYZ] &reg,
     return reg.hasConverged(), transf, result, reg.getFitnessScore()
 
 
-def icp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
+def icp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, max_corres_distance=None):
     """Align source to target using iterative closest point (ICP).
 
     Parameters
@@ -94,7 +98,7 @@ def icp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
     return run(icp, source, target, max_iter)
 
 
-def gicp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
+def gicp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, max_corres_distance=None):
     """Align source to target using generalized iterative closest point (GICP).
 
     Parameters
@@ -122,7 +126,7 @@ def gicp(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
     return run(gicp, source, target, max_iter)
 
 
-def icp_nl(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
+def icp_nl(_pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, max_corres_distance=None):
     """Align source to target using generalized non-linear ICP (ICP-NL).
 
     Parameters

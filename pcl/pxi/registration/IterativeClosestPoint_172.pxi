@@ -51,11 +51,14 @@ cdef class IterativeClosestPoint:
     # def get_FinalNumIteration(self):
     #     return self.me.getFinalNumIteration()
 
-    cdef object run(self, pcl_reg.Registration[cpp.PointXYZ, cpp.PointXYZ, float] &reg, _pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
+    cdef object run(self, pcl_reg.Registration[cpp.PointXYZ, cpp.PointXYZ, float] &reg, _pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, max_corres_distance=None):
         reg.setInputTarget(target.thisptr_shared)
         
         if max_iter is not None:
             reg.setMaximumIterations(max_iter)
+        
+        if max_corres_distance is not None:
+            reg.setMaxCorrespondenceDistance(max_corres_distance)
         
         cdef _pcl.PointCloud result = _pcl.PointCloud()
         
@@ -77,7 +80,7 @@ cdef class IterativeClosestPoint:
         
         return reg.hasConverged(), transf, result, reg.getFitnessScore()
 
-    def icp(self, _pcl.PointCloud source, _pcl.PointCloud target, max_iter=None):
+    def icp(self, _pcl.PointCloud source, _pcl.PointCloud target, max_iter=None, max_corres_distance=None):
         """
         Align source to target using iterative closest point (ICP).
         Parameters
@@ -102,4 +105,4 @@ cdef class IterativeClosestPoint:
         """
         cdef pcl_reg.IterativeClosestPoint_t icp
         icp.setInputCloud(source.thisptr_shared)
-        return self.run(icp, source, target, max_iter)
+        return self.run(icp, source, target, max_iter, max_corres_distance)
